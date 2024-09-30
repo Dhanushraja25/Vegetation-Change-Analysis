@@ -119,7 +119,7 @@ def analyze_vegetation_change(normalized_img1_path, normalized_img2_path):
     increase_percentage = (increase_pixels / total_pixels) * 100
     decrease_percentage = (decrease_pixels / total_pixels) * 100
 
-    return increase_percentage, decrease_percentage
+    return increase_percentage, decrease_percentage, increase, decrease
 
 def apply_overlay(image, mask, color):
     """Apply a colored overlay to the areas defined by the mask."""
@@ -188,7 +188,7 @@ def upload():
     normalized_img1_path, normalized_img2_path, output_plot_path = process_and_display_images(img1_path, aligned_img_path)
 
     # Analyze vegetation change
-    increase_percentage, decrease_percentage = analyze_vegetation_change(normalized_img1_path, normalized_img2_path)
+    increase_percentage, decrease_percentage, increase_mask, decrease_mask = analyze_vegetation_change(normalized_img1_path, normalized_img2_path)
 
     # Format percentages to two decimal places
     increase_percentage = f"{increase_percentage:.2f}"
@@ -197,16 +197,29 @@ def upload():
     # Generate overlays
     increase_overlay_img, decrease_overlay_img = generate_overlays(normalized_img1_path, normalized_img2_path)
 
+    # Save change masks
+    plt.imsave(os.path.join(OUTPUT_FOLDER, 'increase.png'), increase_mask.astype(np.uint8) * 255, cmap='Greens')
+    plt.imsave(os.path.join(OUTPUT_FOLDER, 'decrease.png'), decrease_mask.astype(np.uint8) * 255, cmap='Reds')
+    plt.imsave(os.path.join(OUTPUT_FOLDER, 'no_change.png'), (~increase_mask & ~decrease_mask).astype(np.uint8) * 255, cmap='gray')
+
     output_images = os.listdir(OUTPUT_FOLDER)
     output_images = [img for img in output_images if img.endswith(('.png', '.jpg', '.jpeg'))]
 
-    return render_template('output.html', output_images=output_images, 
-                           increase_percentage=increase_percentage, 
-                           decrease_percentage=decrease_percentage,
-                           increase_overlay_img=increase_overlay_img,
-                           decrease_overlay_img=decrease_overlay_img)
+    # Include paths for increase.png, decrease.png, and no_change.png in the response
+    increase_image = 'increase.png'
+    decrease_image = 'decrease.png'
+    no_change_image = 'no_change.png'
 
-@app.route('/outputs/<filename>')
+    return render_template('output.html',
+                           increase_percentage=increase_percentage,
+                           decrease_percentage=decrease_percentage,
+                           output_plot_path=output_plot_path,
+                           output_images=output_images,
+                           increase_image=increase_image,
+                           decrease_image=decrease_image,
+                           no_change_image=no_change_image)
+
+@app.route('/outputs/<path:filename>')
 def output_file(filename):
     return send_from_directory(OUTPUT_FOLDER, filename)
 
