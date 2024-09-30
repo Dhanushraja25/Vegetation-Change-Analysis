@@ -40,7 +40,7 @@
                     </div>
                     <div class="card-body">
                         <h6 class="card-title">Percentage Increase: {{ increase_percentage }}%</h6>
-                        <img src="{{ url_for('output_file', filename=increase_overlay_img) }}" class="img-fluid" alt="Increase Overlay">
+                        <img src="{{ url_for('output_file', filename='increase_overlay.png') }}" class="img-fluid" alt="Increase Overlay">
                     </div>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                     </div>
                     <div class="card-body">
                         <h6 class="card-title">Percentage Decrease: {{ decrease_percentage }}%</h6>
-                        <img src="{{ url_for('output_file', filename=decrease_overlay_img) }}" class="img-fluid" alt="Decrease Overlay">
+                        <img src="{{ url_for('output_file', filename='decrease_overlay.png') }}" class="img-fluid" alt="Decrease Overlay">
                     </div>
                 </div>
             </div>
@@ -72,15 +72,19 @@
         </div>
 
         <div class="row">
-            {% for image in output_images if image != 'comparison_plot.png' %}
+            {% set ordered_images = [
+                'increase.png',
+                'decrease.png',
+                'no_change.png'
+            ] %}
+            {% for image in ordered_images %}
             <div class="col-md-4 result-card">
                 <div class="card">
-                    <div class="card-header  bg-info rounded-top rounded-bottom ">
-                        <h5 class="mb-0">{{ image.split('.')[0] | replace('_', ' ') }}</h5> <!-- This line removes the extension and replaces underscores with spaces -->
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">{{ image.split('.')[0] | replace('_', ' ') }}</h5>
                     </div>
                     <div class="card-body text-center">
                         <img src="{{ url_for('output_file', filename=image) }}" class="img-fluid" alt="{{ image }}">
-                        <p class="card-text">{{ image.split('.')[0] | replace('_', ' ') }}</p> <!-- Display the cleaned-up image name -->
                     </div>
                 </div>
             </div>
@@ -91,6 +95,7 @@
             <p>&copy; 2024 Veg_An. All rights reserved.</p>
         </footer>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
