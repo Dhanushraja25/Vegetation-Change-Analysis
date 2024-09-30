@@ -210,7 +210,7 @@ def upload():
     decrease_image = 'decrease.png'
     no_change_image = 'no_change.png'
 
-    return render_template('output.html',
+    return render_template('result.html',
                            increase_percentage=increase_percentage,
                            decrease_percentage=decrease_percentage,
                            output_plot_path=output_plot_path,
