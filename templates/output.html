@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegetation Change Analysis Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .result-card {
+            margin-bottom: 20px;
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="result-header">
+            <h1>Analysis Results</h1>
+            <p>Change in vegetation</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 result-card">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Increase in Vegetation</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">Percentage Increase: {{ increase_percentage }}%</h6>
+                        <img src="{{ url_for('output_file', filename=increase_overlay_img) }}" class="img-fluid" alt="Increase Overlay">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 result-card">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">Decrease in Vegetation</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">Percentage Decrease: {{ decrease_percentage }}%</h6>
+                        <img src="{{ url_for('output_file', filename=decrease_overlay_img) }}" class="img-fluid" alt="Decrease Overlay">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 result-card">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Comparison Plot</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('output_file', filename='comparison_plot.png') }}" class="img-fluid" alt="Comparison Plot">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for image in output_images if image != 'comparison_plot.png' %}
+            <div class="col-md-4 result-card">
+                <div class="card">
+                    <div class="card-header  bg-info rounded-top rounded-bottom ">
+                        <h5 class="mb-0">{{ image.split('.')[0] | replace('_', ' ') }}</h5> <!-- This line removes the extension and replaces underscores with spaces -->
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('output_file', filename=image) }}" class="img-fluid" alt="{{ image }}">
+                        <p class="card-text">{{ image.split('.')[0] | replace('_', ' ') }}</p> <!-- Display the cleaned-up image name -->
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Veg_An. All rights reserved.</p>
+        </footer>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
